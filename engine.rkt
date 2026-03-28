@@ -21,6 +21,7 @@
 
 (struct quantity (value units) #:transparent)
 
+;; -------------------------------------------------------------
 ;; We will now start by defining our base axes
 ;; A unit is represented as an association list: '((axis-name . power))
 ;; note that the example given for an association lisp in scheme, is also-
@@ -36,15 +37,40 @@
 ;; We are assigning an axis as a dimension of 1.
 ;; such that the quantity is part number and part dimension of 1.
 ;; and that pair (number . dimension) is what defines our axis.
-;; This can lead to: (a . 1) multiplied by (a . 1) will become (a . 2).
+;; This can lead to: (a . 1) multiplied by (a . 1) which will become (a . 2).
 ;; Or in algebra: x^1 \cdot x^1 = x^2.
-
-
 ;; Example: A quantity of 5 along the c-axis
 ;; (define my-vector (quantity 5 c-axis))
-
 ;; (displayln my-vector)
+
+;; -------------------------------------------------------------
 
 (define (q-multiply q1 q2)
   (quantity (* (quantity-value q1) (quantity-value q2))
-            (append (quantity-units q1) (quantity-units q2))))
+            (simplify-units (append (quantity-units q1) (quantity-units q2)))))
+;; simplify units is how we're storing the result of q-multiply, so that we can-
+;; continue to clean up the results in a for/fold block
+(define (simplify-units messy-units)
+;; We will run the fold and store the resulting hash table in "merged-hash"
+(define merged-hash
+(for/fold 
+([backpack (hash)]) ;; Here we first start with an empty hash.
+([item messy-units]) ;; Here we're saying to walk through the items of our list
+;; note that "item" is a pair such as (a . 1)
+;; our car item is the axis name (a) and our cdr item in the power of 1.
+
+;; -------------------------------------------------------------
+;; hash-update takes the backpack, looks for the axis name, and adds the power to-
+;; whatever is already there. 
+;; The 0 at the end tells Racket-
+;; "If this axis isn't in the backpack yet, assume its power is 0." (which would just result in 1, so, a dimension of 1 which is the default)
+(hash-update backpack (car item)
+;; It's important to note here that hash-update does NOT mutate the hashtable. 
+;; It simply reads our hashtable, applies the math we defined, and gives us a NEW hash table.
+;; here, our hashtable is actually named "backpack"
+;; (car item) extracts just the car item of our pairs. Or in otherwords "find the a-axis"
+
+(lambda (current-power) (+ current-power (cdr item)))
+0))) ;; "other-wise zero"
+
+(hash->list merged-hash)) ;; our final sum
