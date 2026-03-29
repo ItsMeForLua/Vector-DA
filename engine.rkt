@@ -6,6 +6,12 @@
 
 ;; For example: side 'a' carries the unit of the a-axis, etc.
 
+;; My philosophy in math is a preference for "unit-first thinking", rather than "formula-first thinking"-
+;; Formulas are compressed mnumonics that hide their own assumptions. DA simply makes-
+;; those assumptions explicit and structural. Because of this, sanity checks aren't an after-the fact numerical calculation-
+;; they're structural and natural to the process itself.
+;; There are fundamental epistemological differences. With DA, you get reasoning from invariants.
+
 ;; ------------------------------------------------------------
 ;; In this two part structure, our "value" is the number, and-
 ;; the "units" are a list of dimensions.
@@ -63,7 +69,7 @@
 ;; hash-update takes the backpack, looks for the axis name, and adds the power to-
 ;; whatever is already there. 
 ;; The 0 at the end tells Racket-
-;; "If this axis isn't in the backpack yet, assume its power is 0." (which would just result in 1, so, a dimension of 1 which is the default)
+;; "If this axis isn't in the backpack yet, assume its power is 0."
 (hash-update backpack (car item)
 ;; It's important to note here that hash-update does NOT mutate the hashtable. 
 ;; It simply reads our hashtable, applies the math we defined, and gives us a NEW hash table.
