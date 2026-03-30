@@ -36,7 +36,7 @@
 ;; Essentially, it's a function which hugs your two values and waits for you to ask "Can I have those back?"
 ;; \text{cons} = \lambda x. \lambda y. \lambda f. f\ x\ y
 ;; Thus, we can see that a pair is not just a static box in memory-
-;; rather, it is a "closure". A function that remembers the environment in which it was created.
+;; rather, it is similar to (but not literally) a "closure". A function that remembers the environment in which it was created.
 (define a-axis '((a . 1)))
 (define b-axis '((b . 1)))
 (define c-axis '((c . 1)))
@@ -80,3 +80,15 @@
 0))) ;; "other-wise zero"
 
 (hash->list merged-hash)) ;; our final sum
+
+(define (q-add q1 q2)
+  (if (equal? (quantity-units q1) (quantity-units q2))
+    (quantity (+ (quantity-value q1) (quantity-value q2))
+              (quantity-units q1)) ;; If we didn't include this, our engine would just spit out a naked 12.
+    (error "Dimensional Mismatch: You cannot add these two quantities!")))
+
+(define (q-subtract q1 q2)
+  (if (equal? (quantity-units q1) (quantity-units q2))
+    (quantity (- (quantity-value q1) (quantity-value q2))
+              (quantity-units q1))
+    (error "Dimensional Mismatch: You cannot subtract these two quantities!")))
