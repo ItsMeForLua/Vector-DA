@@ -40,6 +40,10 @@
 (define a-axis '((a . 1)))
 (define b-axis '((b . 1)))
 (define c-axis '((c . 1)))
+
+(define x-axis '((x . 1)))
+(define y-axis '((y . 1)))
+(define z-axis '((z . 1)))
 ;; We are assigning an axis as a dimension of 1.
 ;; such that the quantity is part number and part dimension of 1.
 ;; and that pair (number . dimension) is what defines our axis.
@@ -92,3 +96,17 @@
     (quantity (- (quantity-value q1) (quantity-value q2))
               (quantity-units q1))
     (error "Dimensional Mismatch: You cannot subtract these two quantities!")))
+
+(define (q-dot-product ux uy uz vx vy vz)
+  (define x-part (q-multiply ux vx))
+  (define y-part (q-multiply uy vy))
+  (define z-part (q-multiply uz vz))
+  
+  (define dot-sum (+ (quantity-value x-part) 
+                     (quantity-value y-part) 
+                     (quantity-value z-part)))
+                     
+  ;; directionless scalar
+  (quantity dot-sum '((scalar . 1))))
+
+;; we now need q-magnitude and q-angle
